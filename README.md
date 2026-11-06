@@ -12,10 +12,17 @@ The app intentionally contains real-world-style bugs and performance problems. D
 
 ## Setup
 
-1. Create a Sentry project (platform: Next.js) and copy its DSN.
-2. Create an auth token with `project:releases` / `project:write` scope for source map upload.
-3. `cp .env.example .env.local` and fill in the values.
-4. Install and run:
+1. Create a Sentry project (platform: Next.js) and copy its DSN into `.env.local` (see `.env.example`).
+2. For readable production stack traces, create an **Organization Auth Token** (Settings > Developer Settings > Organization Tokens) and put it in a gitignored `.env.sentry-build-plugin`:
+
+   ```bash
+   SENTRY_ORG=<org-slug>
+   SENTRY_PROJECT=sentry-ai-demo
+   SENTRY_AUTH_TOKEN=<token>
+   ```
+
+   Never commit the token. Without it the build still succeeds but source maps are silently not uploaded.
+3. Install and run:
 
    ```bash
    npm install
@@ -24,7 +31,7 @@ The app intentionally contains real-world-style bugs and performance problems. D
    npm run dev
    ```
 
-5. In Sentry:
+4. In Sentry:
    - Install the GitHub integration and add this repository.
    - Seer settings: connect the repository to the project (Seer > Projects).
    - Optional: enable Code Review for the repository.

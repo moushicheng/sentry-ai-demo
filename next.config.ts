@@ -14,8 +14,13 @@ const nextConfig: NextConfig = {
 
 export default withSentryConfig(nextConfig, {
   org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
+  project: process.env.SENTRY_PROJECT ?? 'sentry-ai-demo',
   authToken: process.env.SENTRY_AUTH_TOKEN,
+
+  // Upload a larger set of source maps for prettier stack traces
+  widenClientFileUpload: true,
+
+  // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
   telemetry: false,
 });
