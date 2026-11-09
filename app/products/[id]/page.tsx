@@ -7,7 +7,8 @@ import { addToCart, formatPrice } from '@/lib/cart';
 import type { Product } from '@/lib/types';
 
 function finalPrice(product: Product) {
-  return Math.round(product.price * (1 - product.discount.rate) * 100) / 100;
+  const rate = product.discount?.rate ?? 0;
+  return Math.round(product.price * (1 - rate) * 100) / 100;
 }
 
 export default function ProductDetailPage() {

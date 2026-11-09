@@ -10,7 +10,7 @@ export interface Product {
   tags: string[];
   price: number;
   stock: number;
-  discount: Discount;
+  discount?: Discount;
 }
 
 export interface SearchResult {
