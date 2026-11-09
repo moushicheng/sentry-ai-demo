@@ -10,7 +10,13 @@ export interface Product {
   tags: string[];
   price: number;
   stock: number;
-  discount: Discount;
+  /**
+   * Optional: not every product is on sale. In `lib/server/db.ts` the
+   * `ProductRecord.discount` field is optional and products such as p3, p6 and
+   * p10 have no discount, so `/api/products/[id]` returns them without this
+   * field. Always handle `undefined` (see SENTRY-AI-DEMO-1).
+   */
+  discount?: Discount;
 }
 
 export interface SearchResult {

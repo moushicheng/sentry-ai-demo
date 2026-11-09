@@ -6,8 +6,15 @@ import { useEffect, useState } from 'react';
 import { addToCart, formatPrice } from '@/lib/cart';
 import type { Product } from '@/lib/types';
 
+/**
+ * Unit price after discount. `product.discount` is optional (products without
+ * an active sale, e.g. p3, p6, p10, have none), so a missing discount means a
+ * rate of 0 and the list price is charged. Reading `product.discount.rate`
+ * directly crashed "Add to cart" for those products (SENTRY-AI-DEMO-1).
+ */
 function finalPrice(product: Product) {
-  return Math.round(product.price * (1 - product.discount.rate) * 100) / 100;
+  const rate = product.discount?.rate ?? 0;
+  return Math.round(product.price * (1 - rate) * 100) / 100;
 }
 
 export default function ProductDetailPage() {
