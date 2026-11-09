@@ -14,15 +14,28 @@ export default function SearchPage() {
   useEffect(() => {
     if (!query.trim()) {
       setResults([]);
+      setSelected(0);
       return;
     }
+    // Responses have variable latency and can arrive out of order; ignore any
+    // response that belongs to a query the user has already typed past.
+    let cancelled = false;
     fetch(`/api/search?q=${encodeURIComponent(query)}`)
       .then((res) => res.json())
-      .then((data: { results: SearchResult[] }) => setResults(data.results));
+      .then((data: { results: SearchResult[] }) => {
+        if (cancelled) return;
+        setResults(data.results);
+        // The previous highlight may be out of range for the new result set.
+        setSelected(0);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [query]);
 
   function openSelected() {
     const item = results[selected];
+    if (!item) return;
     router.push(`/products/${item.productId}`);
   }
 
