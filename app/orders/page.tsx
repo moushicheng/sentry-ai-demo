@@ -3,48 +3,39 @@
 import { useEffect, useState } from 'react';
 
 import { formatPrice } from '@/lib/cart';
+import { fetchOrders, summarizeOrders, type OrderSummary } from '@/lib/orders';
 import type { Order } from '@/lib/types';
-
-interface OrdersResponse {
-  items: Order[];
-  total: number;
-}
-
-interface OrderSummary {
-  count: number;
-  spent: number;
-  pending: number;
-}
-
-function summarize(orders: Order[]): OrderSummary {
-  return orders.reduce<OrderSummary>(
-    (acc, o) => ({
-      count: acc.count + 1,
-      spent: acc.spent + o.amount,
-      pending: acc.pending + (o.status === 'delivered' ? 0 : 1),
-    }),
-    { count: 0, spent: 0, pending: 0 },
-  );
-}
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [summary, setSummary] = useState<OrderSummary | null>(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetch('/api/orders')
-      .then((res) => res.json())
-      .then((data: OrdersResponse) => {
-        setSummary(summarize(data.items));
-        setOrders(data.items);
+    let active = true;
+
+    fetchOrders()
+      .then((loadedOrders) => {
+        if (!active) return;
+        setSummary(summarizeOrders(loadedOrders));
+        setOrders(loadedOrders);
+      })
+      .catch(() => {
+        if (active) setError(true);
       });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (
     <>
       <h1>Orders</h1>
       <div className="card">
-        {summary ? (
+        {error ? (
+          <span role="alert">Unable to load orders. Please try again later.</span>
+        ) : summary ? (
           <span>
             {summary.count} orders · {formatPrice(summary.spent)} spent · {summary.pending} in progress
           </span>
