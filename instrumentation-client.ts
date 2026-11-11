@@ -1,6 +1,12 @@
 import * as Sentry from '@sentry/nextjs';
 
+import { initDatadogRum } from '@/lib/rum/datadog-client';
+import { RUM_TYPE } from '@/lib/rum/type';
+
+if (RUM_TYPE === 'datadog') initDatadogRum();
+
 Sentry.init({
+  enabled: RUM_TYPE === 'sentry',
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
   integrations: [
     Sentry.replayIntegration(),
