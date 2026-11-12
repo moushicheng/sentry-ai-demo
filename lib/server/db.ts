@@ -33,7 +33,7 @@ export const coupons: CouponRecord[] = [
   { code: 'SAVE10', percent: 10, expiresAt: '2027-03-31T23:59:59Z' },
   { code: 'NEWUSER', percent: 20, expiresAt: '2027-06-30T23:59:59Z' },
   // imported from the partner campaign sheet
-  { code: 'WINTER15', percent: 15, expiresAt: '31/12/2026 23:59' },
+  { code: 'WINTER15', percent: 15, expiresAt: '2026-12-31T23:59:00Z' },
 ];
 
 export const orders = [
